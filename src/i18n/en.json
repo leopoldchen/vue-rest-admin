@@ -1,0 +1,65 @@
+{
+  "base": {
+    "confirm": {
+      "delete": "Are you sure?",
+      "deleteList": "Will delete all the list, are you sure?"
+    },
+    "success": {
+      "message": "success!",
+      "create": "Created successfully!",
+      "update": "Updated successfully!",
+      "delete": "Deleted successfully!"
+    },
+    "failed": {
+      "message": "failed!",
+      "create": "Failed to create!",
+      "update": "Failed to update!",
+      "delete": "Failed to delete!"
+    },
+    "queryOp": {
+      "eq": "equal",
+      "ne": "not equal",
+      "in": "in",
+      "notIn": "not in",
+      "gt": "grate than",
+      "gte": "grate or equal",
+      "lt": "less than",
+      "lte": "less or equal",
+      "like": "like",
+      "notLike": "not like"
+    }
+  },
+  "home": "Home",
+  "login": "Login",
+  "logout": "Logout",
+  "dashboard": "Dashboard",
+  "success": "Success",
+  "failed": "Failed",
+  "edit": "Edit",
+  "show": "Show",
+  "create": "Create",
+  "delete": "Delete",
+  "save": "Save",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "export": "Export",
+  "new": "New",
+  "addFilter": "Add Filter",
+  "deleteAll": "Delete All",
+  "search": "Search",
+
+
+  "resources": {
+    "User": {
+      "attr": {
+        "id": "id",
+        "username": "username",
+        "role": "role",
+        "desc": "desc",
+        "createdAt": "created at",
+        "updatedAt": "updated at"
+      },
+      "management": "user management"
+    }
+  }
+}
