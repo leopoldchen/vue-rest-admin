@@ -57,8 +57,4 @@ export default class User extends BaseResource {
   static api() {
     return crudAPI
   }
-
-  static resourceName() {
-    return 'User'
-  }
 }

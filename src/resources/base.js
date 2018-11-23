@@ -19,10 +19,6 @@ export default class BaseResource {
     throw new Error('Please define the resource API!')
   }
 
-  static resourceName() {
-    throw new Error('Please define the resource name!')
-  }
-
   /*
     resource attributes
     example:
@@ -143,6 +139,6 @@ export default class BaseResource {
   }
 
   static i18n(col) {
-    return i18n.t(['resources', this.resourceName(), 'attr', col].join('.'))
+    return i18n.t(['resources', this.name, 'attr', col].join('.'))
   }
 }
