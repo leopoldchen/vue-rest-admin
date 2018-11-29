@@ -86,17 +86,19 @@ export default {
       roles: 'roles'
     }),
     actionAreaWidth() {
-      const defaultLength = ['show', 'edit', 'destroy'].length
-      const disableLength = (this.resourceClass.actions().disabled || []).length
-      const extraLength = (this.resourceClass.actions().extra || []).length
+      const defaultAction = ['show', 'edit', 'delete']
+      const disabled = this.resourceClass.actions().disabled || []
+      const extraLength = this.canActions.length
       const buttonWidth = 80
-      return (defaultLength - disableLength + extraLength) * buttonWidth
+      return (_.difference(defaultAction, disabled).length + extraLength) * buttonWidth
     },
     canActions() {
       const extraAxtions = this.resourceClass.actions().extra || []
-      return _.remove(extraAxtions, action => {
-        !this.can(action)
+      _.remove(extraAxtions, action => {
+        return !this.can(action.name)
       })
+      console.log(extraAxtions)
+      return extraAxtions
     },
     attrs() {
       return this.resourceClass.showableAttrs()

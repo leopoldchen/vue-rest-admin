@@ -75,7 +75,7 @@ export default {
     },
     loadDefaultValues() {
       _.forEach(this.resourceClass.attributes(), (attr) => {
-        if ((attr.required || attr.edit) && attr.default !== undefined) {
+        if ((attr.required || attr.edit !== false) && attr.default !== undefined) {
           this.model[attr.name] = _.isFunction(attr.default) ? attr.default() : attr.default
         }
       })
