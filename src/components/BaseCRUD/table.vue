@@ -29,15 +29,6 @@ export default {
   name: 'CRUDTable',
   props: {
     listLoading: Boolean,
-    list: {
-      type: Array,
-      default: () => {
-        return {}
-      }
-    },
-    resourceClass: {
-      required: true
-    },
     filter: {
       type: Function,
       default: (col, value) => {
@@ -90,7 +81,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      roles: 'roles'
+      roles: 'roles',
+      resourceClass: 'resourceClass',
+      list: 'resourceList'
     }),
     actionAreaWidth() {
       const defaultAction = ['show', 'edit', 'delete']

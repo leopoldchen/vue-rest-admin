@@ -42,8 +42,8 @@ export default {
       showingFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: 'edit',
+        create: 'create'
       },
       downloadLoading: false,
       searchParams: []
@@ -132,6 +132,13 @@ export default {
       this.showingFormVisible = true
     },
     handleExport() {
+      if (this.selected.length === 0) {
+        this.$message({
+          type: 'error',
+          message: this.$t('base.failed.empty')
+        })
+        return
+      }
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = this.resourceClass.exportAttrs().map(item => this.i18n(item.name))

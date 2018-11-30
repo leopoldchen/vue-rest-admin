@@ -26,13 +26,14 @@
 <script>
 import _ from 'lodash'
 import { getResourceClass } from '@/resources'
+import { mapGetters } from 'vuex'
+import {
+  QUERY
+} from './config'
 
 export default {
   name: 'CRUDFrom',
   props: {
-    resourceClass: {
-      required: true
-    },
     status: String,
     formData: Object
   },
@@ -97,8 +98,8 @@ export default {
           } else if (this.model[attr.name] && attr.multiple && this.model[attr.name].length > 0) {
             const associateClass = getResourceClass(attr.associate)
             const list = await associateClass.api().list({
-              'x-page': 1,
-              'x-per-page': 20,
+              [QUERY.page]: 1,
+              [QUERY.perPage]: 20,
               'id-in': this.model[attr.name]
             })
             this.associateOptions[attr.name] = list.rows.map(item => {
@@ -146,6 +147,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters({
+      resourceClass: 'resourceClass'
+    }),
     attrs() {
       return this.resourceClass.editableAttrs()
     },
