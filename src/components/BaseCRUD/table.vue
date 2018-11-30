@@ -1,6 +1,7 @@
 <template>
   <div class="table-container" v-loading="listLoading">
-    <el-table :data="list" element-loading-text="Loading..." border fit highlight-current-row style="width: 100%" @sort-change="handleSort">
+    <el-table ref="multipleTable" :data="list" element-loading-text="Loading..." border fit highlight-current-row style="width: 100%" @sort-change="handleSort" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column align="center" v-for="col in attrs" :key="col.name" :prop="col.name" :label="i18n(col.name)" :width="col.width" sortable="custom">
         <template slot-scope="scope">
           <span> {{filter(col, rowValue(scope.row, col.name))}} </span>
@@ -11,7 +12,7 @@
         <template slot-scope="scope">
           <el-button v-if="can('show')" size="mini" @click="handleAction('show', scope.row)">{{$t('show')}}</el-button>
           <el-button v-if="can('edit')" type="primary" size="mini" @click="handleAction('edit', scope.row)">{{$t('edit')}}</el-button>
-          <el-button v-if="can('delete')" type="warning" size="mini" @click="handleAction('delete', scope.row)">{{$t('delete')}}</el-button>
+          <el-button v-if="can('destroy')" type="warning" size="mini" @click="handleAction('delete', scope.row)">{{$t('delete')}}</el-button>
           <el-button v-for="op in canActions" :key="op.name" @click="handleAction(op.name, scope.row)" size="mini" :type="op.button">{{$t(op.name)}}</el-button>
         </template>
       </el-table-column>
@@ -22,7 +23,7 @@
 <script>
 import _ from 'lodash'
 import { rolesCan } from '@/utils/cancan'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'CRUDTable',
@@ -50,6 +51,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      setSelectedResouces: 'setSelectedResouces'
+    }),
     i18n(col) {
       return this.resourceClass.i18n(col)
     },
@@ -79,6 +83,9 @@ export default {
     handleSort(evt) {
       const order = evt.order === 'descending' ? 'desc' : 'asc'
       this.$emit('handleSort', evt.prop, order)
+    },
+    handleSelectionChange(selectedResources) {
+      this.setSelectedResouces({ selectedResources })
     }
   },
   computed: {

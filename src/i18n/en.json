@@ -5,16 +5,17 @@
       "deleteList": "Will delete all the list, are you sure?"
     },
     "success": {
-      "message": "success!",
+      "message": "Success!",
       "create": "Created successfully!",
       "update": "Updated successfully!",
       "delete": "Deleted successfully!"
     },
     "failed": {
-      "message": "failed!",
+      "message": "Failed!",
       "create": "Failed to create!",
       "update": "Failed to update!",
-      "delete": "Failed to delete!"
+      "delete": "Failed to delete!",
+      "empty": "Empty List!"
     },
     "queryOp": {
       "eq": "equal",
@@ -41,13 +42,13 @@
   "delete": "Delete",
   "save": "Save",
   "cancel": "Cancel",
+  "update": "Update",
   "ok": "OK",
   "export": "Export",
   "new": "New",
   "addFilter": "Add Filter",
   "deleteAll": "Delete All",
   "search": "Search",
-
 
   "resources": {
     "User": {

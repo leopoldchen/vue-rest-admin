@@ -68,6 +68,7 @@ export default {
     removeFilter(filter) {
       this.$emit('removeFilter', filter)
       this.quries = _.omit(this.quries, filter)
+      this.handleSearch()
     },
     handleSearch() {
       const q = {}

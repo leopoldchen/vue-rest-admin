@@ -60,7 +60,7 @@ const user = {
         commit('SET_TOKEN', '')
         return Promise.reject('getInfo: roles must be a non-null array !')
       }
-      commit('SET_ID', data._id)
+      commit('SET_ID', data.id)
       commit('SET_NAME', data.username)
       commit('SET_AVATAR', data.avatarUrl)
       return roles

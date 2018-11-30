@@ -2,7 +2,7 @@
   "base": {
     "confirm": {
       "delete": "是否确定?",
-      "deleteList": "将删除整个列表，是否确定?"
+      "deleteList": "将删除选中数据，请确认?"
     },
     "success": {
       "create": "创建成功!",
@@ -13,19 +13,20 @@
       "message": "失败!",
       "create": "创建失败!",
       "update": "更新失败!",
-      "delete": "删除失败!"
+      "delete": "删除失败!",
+      "empty": "没有选中数据！"
     },
     "queryOp": {
       "eq": "等于",
       "ne": "不等于",
-      "in": "包含",
-      "notIn": "不包含",
+      "in": "包含([ids])",
+      "notIn": "不包含([ids])",
       "gt": "大于",
       "gte": "大于等于",
       "lt": "小于",
       "lte": "小于等于",
-      "like": "匹配",
-      "notLike": "不匹配"
+      "like": "匹配(模糊)",
+      "notLike": "不匹配(模糊)"
     }
   },
   "home": "首页",
@@ -40,12 +41,14 @@
   "delete": "删除",
   "save": "保存",
   "cancel": "取消",
+  "update": "更新",
   "ok": "确定",
   "export": "导出",
   "new": "新增",
   "addFilter": "筛选",
   "deleteAll": "删除全部",
   "search": "搜索",
+  "send": "发送",
 
   "resources": {
     "User": {

@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import md5 from 'blueimp-md5'
 import moment from 'moment'
 import {
   QUERY,
@@ -13,7 +12,8 @@ import {
   rolesCan
 } from '@/utils/cancan'
 import {
-  mapGetters
+  mapGetters,
+  mapActions
 } from 'vuex'
 import CRUDTable from './table'
 import CRUDForm from './form'
@@ -32,15 +32,12 @@ export default {
   },
   data() {
     return {
-      list: null,
-      total: null,
       listLoading: true,
       listQuery: {
         [QUERY.page]: 1,
         [QUERY.perPage]: 20,
         [QUERY.order]: ''
       },
-      activeRow: {},
       dialogFormVisible: false,
       showingFormVisible: false,
       dialogStatus: '',
@@ -49,26 +46,21 @@ export default {
         create: 'Create'
       },
       downloadLoading: false,
-      nestedData: {},
-      nestedKey: undefined,
       searchParams: []
     }
   },
-  created() {
-    this.loadResource()
-    this.initNestedData()
-    this.getList()
+  async created() {
+    await this.setResourceName({ resourceName: this.resource })
+    await this.getList()
   },
   methods: {
+    ...mapActions({
+      setResourceName: 'setResourceName',
+      setActiveResource: 'setActiveResource',
+      setQueryOptions: 'setQueryOptions'
+    }),
     i18n(col) {
       return this.resourceClass.i18n(col)
-    },
-    loadResource() {
-      this.resourceClass = getResourceClass(this.resource)
-      this.api = this.resourceClass.api()
-      this.attributes = this.resourceClass.attributes()
-      this.actions = this.resourceClass.actions()
-      this.nested = this.resourceClass.nested()
     },
     can(action) {
       if (this.actions.disabled && _.indexOf(this.actions.disabled, action) === -1) {
@@ -77,11 +69,7 @@ export default {
     },
     async getList() {
       this.listLoading = true
-      const res = await this.api.list(this.listQuery)
-      this.list = res.rows.map(row => newResource(this.resource, row))
-      this.total = res.count
-      await this.getNestedData()
-      this.nestedKey = md5(this.nestedData)
+      await this.setQueryOptions({ queryOptions: this.listQuery })
       this.listLoading = false
     },
     colFilter(col, value) {
@@ -96,35 +84,9 @@ export default {
       }
       return value
     },
-    initNestedData() {
-      for (const item of this.nested) {
-        this.nestedData[item.name] = {}
-      }
-    },
     getNestedAttr(name) {
       for (const item of this.nested) {
         if (item.name === name) return getResourceClass(item.associate).title()
-      }
-    },
-    async getNestedData() {
-      for (const item of this.nested) {
-        const nestedResource = getResourceClass(item.associate)
-        const key = item.name
-        const idList = _(this.list)
-          .map(item => {
-            return _.isObject(item[key]) ? item[key].id : item[key]
-          })
-          .compact()
-          .flatten()
-          .uniq()
-        const list = await nestedResource.api().list({
-          id: idList
-        })
-        for (const item of list.rows) {
-          _.merge(this.nestedData[key], {
-            [item.id]: item
-          })
-        }
       }
     },
     handleAction(action, row) {
@@ -153,27 +115,27 @@ export default {
       this.listQuery[QUERY.page] = val
       this.getList()
     },
-    handleCreate() {
-      this.activeRow = null
+    async handleCreate() {
+      this.setActiveResource({})
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },
-    handleEdit(row) {
-      this.activeRow = { ...row
-      }
+    async handleEdit(row) {
+      const resource = this.list[this.list.findIndex(item => item.id === row.id)]
+      this.setActiveResource({ resource })
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
     },
-    handleShow(row) {
-      this.activeRow = { ...row
-      }
+    async handleShow(row) {
+      const resource = this.list[this.list.findIndex(item => item.id === row.id)]
+      this.setActiveResource({ resource })
       this.showingFormVisible = true
     },
     handleExport() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = this.resourceClass.exportAttrs().map(item => this.i18n(item.name))
-        const data = this.list.map(data =>
+        const data = this.selected.map(data =>
           this.resourceClass.exportAttrs().map(col => this.colFilter(col, data[col.name]))
         )
         excel.export_json_to_excel({
@@ -217,6 +179,7 @@ export default {
           type: 'success',
           duration: 2000
         })
+        this.getList()
       } catch (err) {
         console.error(err)
       }
@@ -254,14 +217,21 @@ export default {
       })
     },
     handleDeleteAll() {
-      this.$confirm(this.$t('base.success.deleteList'), this.$t('delete'), {
+      if (this.selected.length === 0) {
+        this.$message({
+          type: 'error',
+          message: this.$t('base.failed.empty')
+        })
+        return
+      }
+      this.$confirm(this.$t('base.confirm.deleteList'), this.$t('delete'), {
         confirmButtonText: this.$t('ok'),
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
         this.api
           .destroyAll({
-            ids: this.list.map((row) => row.id)
+            ids: this.selected.map((row) => row.id)
           })
           .then(() => {
             this.$notify({
@@ -305,7 +275,18 @@ export default {
   },
   computed: {
     ...mapGetters({
-      roles: 'roles'
+      roles: 'roles',
+      nested: 'nested',
+      nestedData: 'nestedData',
+      list: 'resourceList',
+      activeRow: 'activeResource',
+      selected: 'selectedResources',
+      resourceName: 'resourceName',
+      resourceClass: 'resourceClass',
+      total: 'total',
+      api: 'api',
+      attributes: 'attributes',
+      actions: 'actions'
     }),
     showingData() {
       if (!this.showingFormVisible) return []
