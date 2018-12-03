@@ -89,7 +89,7 @@ export default {
         if (item.name === name) return getResourceClass(item.associate).title()
       }
     },
-    handleAction(action, row) {
+    async handleAction(action, row) {
       if (_.indexOf(DEFAULT_ACTIONS, action) !== -1) {
         return this[`handle${_.capitalize(action)}`](row)
       } else {
@@ -97,9 +97,27 @@ export default {
           name: action
         })
         if (index !== -1) {
-          const func = this.actions.extra[index].func || this[`handle${_.capitalize(action)}`]
+          const extraAction = this.actions.extra[index]
+          const func = extraAction.func || this[`handle${_.capitalize(action)}`]
           if (!func) throw new Error('Missing action' + action)
-          return func(row)
+          if (extraAction.confirm) {
+            this.$confirm(extraAction.confirm, '', {
+              confirmButtonText: this.$t('ok'),
+              cancelButtonText: this.$t('cancel'),
+              type: 'warning'
+            }).then(async() => {
+              await func(row)
+              this.getList()
+            }).catch(() => {
+              this.$message({
+                type: 'error',
+                message: this.$t('base.failed.message')
+              })
+            })
+          } else {
+            await func(row)
+            this.getList()
+          }
         }
       }
     },

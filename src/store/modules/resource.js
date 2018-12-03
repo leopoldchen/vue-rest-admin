@@ -84,7 +84,7 @@ const resource = {
         const nestedResource = getResourceClass(item.associate)
         const key = item.name
         nestedData[key] = {}
-        const idList = _(this.list)
+        const idList = _(resourceList)
           .map(item => {
             return _.isObject(item[key]) ? item[key].id : item[key]
           })

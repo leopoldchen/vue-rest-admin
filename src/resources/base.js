@@ -3,6 +3,7 @@ import _ from 'lodash'
 import {
   i18n
 } from '../i18n'
+import store from '@/store'
 
 export default class BaseResource {
   constructor(row) {
@@ -139,6 +140,12 @@ export default class BaseResource {
   }
 
   static i18n(col) {
-    return i18n.t(['resources', this.name, 'attr', col].join('.'))
+    // FIXME
+    // this.name is not working on production
+    return i18n.t(['resources', store.getters.resourceName, 'attr', col].join('.'))
+  }
+
+  static i18nBase(attr) {
+    return i18n.t(attr)
   }
 }
