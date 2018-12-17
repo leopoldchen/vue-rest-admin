@@ -3266,9 +3266,10 @@ html-minifier@^3.2.3:
     relateurl "0.2.x"
     uglify-js "3.4.x"
 
-html-webpack-plugin@^4.0.0-alpha:
+html-webpack-plugin@4.0.0-alpha:
   version "4.0.0-alpha"
   resolved "http://registry.npm.taobao.org/html-webpack-plugin/download/html-webpack-plugin-4.0.0-alpha.tgz#b2c7b6d4885a209c999dfce3ffb9866e2c8c0eaa"
+  integrity sha1-sse21IhaIJyZnfzj/7mGbiyMDqo=
   dependencies:
     "@types/tapable" "1.0.2"
     html-minifier "^3.2.3"
