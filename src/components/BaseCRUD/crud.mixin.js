@@ -291,10 +291,12 @@ export default {
       if (index !== -1) this.searchParams.splice(index, 1)
     },
     handleSearch(q) {
-      this.listQuery = _.pickBy(this.listQuery, (value, key) => {
-        return QUERY[key] !== undefined
+      const query = {}
+      _.forEach(QUERY, (v) => {
+        query[v] = this.listQuery[v]
       })
-      _.merge(this.listQuery, q)
+      _.merge(query, q)
+      this.listQuery = query
       this.getList()
     }
   },
