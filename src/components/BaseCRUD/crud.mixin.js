@@ -1,16 +1,13 @@
 import _ from 'lodash'
 import moment from 'moment'
 import {
-  QUERY,
-  FORMAT
-} from './config'
-import {
   newResource,
   getResourceClass
 } from '@/resources'
 import {
   rolesCan
 } from '@/utils/cancan'
+import { ActiveQuery } from '@/utils/query'
 import {
   mapGetters,
   mapActions
@@ -22,6 +19,9 @@ import CRUDPaginate from './paginate'
 import CRUDFilter from './filter'
 
 const DEFAULT_ACTIONS = ['create', 'show', 'edit', 'delete', 'export']
+const FORMAT = {
+  date: 'YYYY-MM-DD HH:mm'
+}
 
 export default {
   props: {
@@ -34,10 +34,11 @@ export default {
     return {
       listLoading: true,
       listQuery: {
-        [QUERY.page]: 1,
-        [QUERY.perPage]: 20,
-        [QUERY.order]: ''
+        page: 1,
+        perPage: 20,
+        order: ''
       },
+      listFilter: {},
       dialogFormVisible: false,
       showingFormVisible: false,
       dialogStatus: '',
@@ -69,14 +70,17 @@ export default {
     },
     async getList() {
       this.listLoading = true
-      await this.setQueryOptions({ queryOptions: this.listQuery })
+      const query = new ActiveQuery()
+      const queryOptions = query.where(this.listFilter).paginate(this.listQuery.page, this.listQuery.perPage).order(this.listQuery.order).query
+      await this.setQueryOptions({ queryOptions })
       this.listLoading = false
     },
-    colFilter(col, value) {
+    colFilter(col, row) {
+      const value = _.get(row, col.name)
       if (value === null || value === undefined) return ''
       if (col.filter) return col.filter(value)
-      if (this.nestedData[col.name]) {
-        const item = this.nestedData[col.name][value]
+      if (col.associate) {
+        const item = _.get(row, _.snakeCase(col.associate))
         return (item && item[this.getNestedAttr(col.name)]) || ''
       }
       if (col.type === 'Date') {
@@ -122,15 +126,15 @@ export default {
       }
     },
     handleFilter() {
-      this.listQuery[QUERY.page] = 1
+      this.listQuery.page = 1
       this.getList()
     },
     handleSizeChange(val) {
-      this.listQuery[QUERY.perPage] = val
+      this.listQuery.perPage = val
       this.getList()
     },
     handleCurrentChange(val) {
-      this.listQuery[QUERY.page] = val
+      this.listQuery.page = val
       this.getList()
     },
     async handleCreate() {
@@ -278,7 +282,7 @@ export default {
       })
     },
     handleSort(column, order) {
-      this.listQuery[QUERY.order] = column + '-' + order
+      this.listQuery.order = column + '-' + order
       this.getList()
     },
     handleAddFilter(filter) {
@@ -291,12 +295,7 @@ export default {
       if (index !== -1) this.searchParams.splice(index, 1)
     },
     handleSearch(q) {
-      const query = {}
-      _.forEach(QUERY, (v) => {
-        query[v] = this.listQuery[v]
-      })
-      _.merge(query, q)
-      this.listQuery = query
+      this.listFilter = q
       this.getList()
     }
   },
@@ -304,7 +303,6 @@ export default {
     ...mapGetters({
       roles: 'roles',
       nested: 'nested',
-      nestedData: 'nestedData',
       list: 'resourceList',
       activeRow: 'activeResource',
       selected: 'selectedResources',

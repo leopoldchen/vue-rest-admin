@@ -17,6 +17,8 @@
 import _ from 'lodash'
 import { getQueryOps, parseQuery } from './queryOps'
 import { mapGetters } from 'vuex'
+import { getResourceClass } from '@/resources'
+import { ActiveQuery } from '@/utils/query'
 
 export default {
   name: 'CRUDFiler',
@@ -50,12 +52,18 @@ export default {
       for (const filter of data) {
         if (!newQueries[filter]) {
           const index = _.findIndex(attrs, attr => attr.name === filter)
-          const type = attrs[index].type || 'String'
+          const attr = attrs[index]
+          const type = attr.type || 'String'
           const options = getQueryOps(type)
+          let q = filter
+          if (attr.associate) {
+            q = ActiveQuery.associateKey(attr.associate, getResourceClass(attr.associate).title())
+          }
           newQueries[filter] = {
             name: filter,
             op: 'eq',
             value: '',
+            q,
             type,
             options
           }

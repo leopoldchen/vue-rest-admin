@@ -27,9 +27,7 @@
 import _ from 'lodash'
 import { getResourceClass } from '@/resources'
 import { mapGetters } from 'vuex'
-import {
-  QUERY
-} from './config'
+import { ActiveQuery } from '@/utils/query'
 
 export default {
   name: 'CRUDFrom',
@@ -97,11 +95,8 @@ export default {
             ]
           } else if (this.model[attr.name] && attr.multiple && this.model[attr.name].length > 0) {
             const associateClass = getResourceClass(attr.associate)
-            const list = await associateClass.api().list({
-              [QUERY.page]: 1,
-              [QUERY.perPage]: 20,
-              'id-in': this.model[attr.name]
-            })
+            const queryOptions = new ActiveQuery().where({ 'id-in': this.model[attr.name] }).paginate(1, 20).query
+            const list = await associateClass.api().list(queryOptions)
             this.associateOptions[attr.name] = list.rows.map(item => {
               return {
                 key: item.id,

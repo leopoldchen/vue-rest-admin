@@ -1,6 +1,4 @@
-import {
-  queryKey
-} from './config'
+import { ActiveQuery } from '@/utils/query'
 import {
   i18n
 } from '@/i18n'
@@ -78,11 +76,11 @@ export const getQueryOps = (type) => {
 }
 
 export const parseQuery = ({
-  name,
+  q,
   op,
   value
 }) => {
-  const key = queryKey(name, op)
+  const key = ActiveQuery.queryKey(q, op)
   switch (op) {
     case 'like':
     case 'notLike':

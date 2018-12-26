@@ -7,12 +7,7 @@ import store from '@/store'
 
 export default class BaseResource {
   constructor(row) {
-    const attrs = this.constructor.attributes()
-    if (row) {
-      for (const attr of attrs) {
-        this[attr.name] = _.get(row, attr.name)
-      }
-    }
+    _.merge(this, row)
   }
 
   // resource rest API
@@ -90,6 +85,12 @@ export default class BaseResource {
       }
     }
     return 'name'
+  }
+
+  static queryFilter(query) {
+    // will include all by default, to make sure every associate works
+    query.include({ all: true, nested: false })
+    return query
   }
 
   static attrFilter(key) {

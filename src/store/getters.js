@@ -18,7 +18,6 @@ const getters = {
   actions: state => state.resource.actions,
   attributes: state => state.resource.attributes,
   api: state => state.resource.api,
-  nested: state => state.resource.nested,
-  nestedData: state => state.resource.nestedData
+  nested: state => state.resource.nested
 }
 export default getters
