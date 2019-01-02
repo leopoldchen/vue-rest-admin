@@ -70,7 +70,7 @@ export default {
     },
     async getList() {
       this.listLoading = true
-      const query = new ActiveQuery()
+      const query = this.resourceClass.queryFilter(new ActiveQuery())
       const queryOptions = query.where(this.listFilter).paginate(this.listQuery.page, this.listQuery.perPage).order(this.listQuery.order).query
       await this.setQueryOptions({ queryOptions })
       this.listLoading = false
