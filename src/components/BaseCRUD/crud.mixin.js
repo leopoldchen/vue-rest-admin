@@ -80,7 +80,7 @@ export default {
       if (value === null || value === undefined) return ''
       if (col.filter) return col.filter(value)
       if (col.associate) {
-        const item = _.get(row, _.snakeCase(col.associate))
+        const item = _.get(row, _.snakeCase(col.associateAs || col.associate))
         return (item && item[this.getNestedAttr(col.name)]) || ''
       }
       if (col.type === 'Date') {
