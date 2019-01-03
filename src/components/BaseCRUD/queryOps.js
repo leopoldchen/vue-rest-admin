@@ -11,14 +11,6 @@ const commonOps = () => {
   {
     key: 'ne',
     value: i18n.t('base.queryOp.ne')
-  },
-  {
-    key: 'in',
-    value: i18n.t('base.queryOp.in')
-  },
-  {
-    key: 'notIn',
-    value: i18n.t('base.queryOp.notIn')
   }
   ]
 }
@@ -40,6 +32,14 @@ export const queryOps = () => {
     {
       key: 'lte',
       value: i18n.t('base.queryOp.lte')
+    },
+    {
+      key: 'in',
+      value: i18n.t('base.queryOp.in')
+    },
+    {
+      key: 'notIn',
+      value: i18n.t('base.queryOp.notIn')
     }
     ]),
     'String': commonOps().concat([{
@@ -66,6 +66,14 @@ export const queryOps = () => {
     {
       key: 'lte',
       value: i18n.t('base.queryOp.lte')
+    },
+    {
+      key: 'in',
+      value: i18n.t('base.queryOp.in')
+    },
+    {
+      key: 'notIn',
+      value: i18n.t('base.queryOp.notIn')
     }
     ])
   }

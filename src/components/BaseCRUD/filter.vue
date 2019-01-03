@@ -53,7 +53,7 @@ export default {
         if (!newQueries[filter]) {
           const index = _.findIndex(attrs, attr => attr.name === filter)
           const attr = attrs[index]
-          const type = attr.type || 'String'
+          const type = attr.associate ? 'String' : (attr.type || 'String')
           const options = getQueryOps(type)
           let q = filter
           if (attr.associate) {
