@@ -51,13 +51,18 @@ export default {
       const newQueries = _.cloneDeep(this.quries)
       for (const filter of data) {
         if (!newQueries[filter]) {
-          const index = _.findIndex(attrs, attr => attr.name === filter)
+          const index = _.findIndex(attrs, attr => attr.name === filter || attr.alias === filter)
           const attr = attrs[index]
           const type = attr.associate ? 'String' : (attr.type || 'String')
           const options = getQueryOps(type)
           let q = filter
           if (attr.associate) {
-            q = ActiveQuery.associateKey(attr.associate, getResourceClass(attr.associate).title())
+            const associateField = attr.associateField || getResourceClass(attr.associate).title()
+            if (attr.associateAs) {
+              q = ActiveQuery.associateKey(attr.associateAs, associateField)
+            } else {
+              q = ActiveQuery.associateKey(_.snakeCase(attr.associate), associateField)
+            }
           }
           newQueries[filter] = {
             name: filter,

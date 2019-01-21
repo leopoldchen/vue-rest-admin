@@ -80,8 +80,8 @@ export default {
       if (value === null || value === undefined) return ''
       if (col.filter) return col.filter(value)
       if (col.associate) {
-        const item = _.get(row, _.snakeCase(col.associateAs || col.associate))
-        return (item && item[this.getNestedAttr(col.name)]) || ''
+        const item = _.get(row, col.associateAs || _.snakeCase(col.associate))
+        return (item && (item[col.associateField] || item[this.getNestedAttr(col.name)])) || value
       }
       if (col.type === 'Date') {
         return moment(value).format(FORMAT.date)
@@ -104,8 +104,8 @@ export default {
           const extraAction = this.actions.extra[index]
           const func = extraAction.func || this[`handle${_.capitalize(action)}`]
           if (!func) throw new Error('Missing action' + action)
-          if (extraAction.confirm) {
-            this.$confirm(extraAction.confirm, '', {
+          if (extraAction.confirmMsg) {
+            this.$confirm(extraAction.confirmMsg(row), '', {
               confirmButtonText: this.$t('ok'),
               cancelButtonText: this.$t('cancel'),
               type: 'warning'
@@ -325,7 +325,7 @@ export default {
       return data
     },
     searchableFilters() {
-      return this.resourceClass.searchAttrs().map(attr => attr.name)
+      return this.resourceClass.searchAttrs().map(attr => attr.alias || attr.name)
     }
   },
   components: {

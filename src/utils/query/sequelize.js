@@ -10,7 +10,7 @@ export default class SequelizeQuery {
   }
 
   static associateKey(model, name) {
-    return `$${_.snakeCase(model)}.${name}$`
+    return `$${model}.${name}$`
   }
 
   static queryKey(attr, op) {
