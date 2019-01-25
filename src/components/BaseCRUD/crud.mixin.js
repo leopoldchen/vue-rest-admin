@@ -282,7 +282,7 @@ export default {
       })
     },
     handleSort(column, order) {
-      this.listQuery.order = column + '-' + order
+      this.listQuery.order = column ? column + '-' + order : undefined
       this.getList()
     },
     handleAddFilter(filter) {
