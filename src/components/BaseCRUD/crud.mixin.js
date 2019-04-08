@@ -162,11 +162,10 @@ export default {
         return
       }
       this.downloadLoading = true
+      const exportAttrs = this.resourceClass.exportAttrs()
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = this.resourceClass.exportAttrs().map(item => this.i18n(item.name))
-        const data = this.selected.map(data =>
-          this.resourceClass.exportAttrs().map(col => this.colFilter(col, data[col.name]))
-        )
+        const tHeader = exportAttrs.map(item => this.i18n(item.name))
+        const data = this.selected.map(row => exportAttrs.map(col => this.colFilter(col, row)))
         excel.export_json_to_excel({
           header: tHeader,
           data,

@@ -17,6 +17,8 @@ export default class SequelizeQuery {
     return attr + '-' + op
   }
 
+  // example: {'name-eq': 'abc'} => {where: {name: {$eq: "abc"}}}
+  // nested: {'user-name-eq': 'abc'} => {where: {$user.name$: {$eq: "abc"}}}
   where(q = {}) {
     for (const key in q) {
       const k = key.split('-')
