@@ -138,7 +138,13 @@ export default {
       this.getList()
     },
     async handleCreate() {
-      this.setActiveResource({})
+      const resource = {}
+      _.forEach(this.resourceClass.attributes(), (attr) => {
+        if ((attr.required || attr.edit !== false) && attr.default !== undefined) {
+          resource[attr.name] = _.isFunction(attr.default) ? attr.default() : attr.default
+        }
+      })
+      this.setActiveResource({ resource })
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
     },

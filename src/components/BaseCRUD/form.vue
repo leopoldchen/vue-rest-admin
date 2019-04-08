@@ -67,17 +67,7 @@ export default {
     },
     initModel() {
       this.model = _.cloneDeep(this.formData || {})
-      if (this.status === 'create') {
-        this.loadDefaultValues()
-      }
       this.loadModelAssociate()
-    },
-    loadDefaultValues() {
-      _.forEach(this.resourceClass.attributes(), (attr) => {
-        if ((attr.required || attr.edit !== false) && attr.default !== undefined) {
-          this.model[attr.name] = _.isFunction(attr.default) ? attr.default() : attr.default
-        }
-      })
     },
     async loadModelAssociate() {
       this.loading = true
