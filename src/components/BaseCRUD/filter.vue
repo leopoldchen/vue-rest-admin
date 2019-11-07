@@ -1,15 +1,15 @@
 <template>
-  <div class="filter-container" v-if="haveSearchParams">
-    <div style="margin: 6px;" v-for="filter in quries" :key="filter.name">
+  <div v-if="haveSearchParams" class="filter-container">
+    <div v-for="filter in quries" :key="filter.name" style="margin: 6px;">
       <el-button icon="el-icon-minus" size="mini" circle @click="removeFilter(filter.name)" />
-      <span style="width: 120px; display: inline-block"> {{i18n(filter.name)}} </span>
-      <el-select style="margin: 0px 10px" v-model="filter.op">
+      <span style="width: 120px; display: inline-block"> {{ i18n(filter.name) }} </span>
+      <el-select v-model="filter.op" style="margin: 0px 10px">
         <el-option v-for="item in filter.options" :key="item.key" :label="item.value" :value="item.key" />
       </el-select>
-      <el-date-picker v-if="filter.type=='Date'" style="width: 300px" type="datetime" v-model="filter.value"></el-date-picker>
-      <el-input v-else style="width: 300px" size="medium" v-model="filter.value" />
+      <el-date-picker v-if="filter.type=='Date'" v-model="filter.value" style="width: 300px" type="datetime" />
+      <el-input v-else v-model="filter.value" style="width: 300px" size="medium" />
     </div>
-    <el-button icon="el-icon-search" type="primary" @click="handleSearch()"> {{$t('search')}} </el-button>
+    <el-button icon="el-icon-search" type="primary" @click="handleSearch()"> {{ $t('search') }} </el-button>
   </div>
 </template>
 
@@ -33,13 +33,21 @@ export default {
       quries: {}
     }
   },
-  created() {
-    this.syncSearchParams()
+  computed: {
+    ...mapGetters({
+      resourceClass: 'resourceClass'
+    }),
+    haveSearchParams() {
+      return this.searchParams.length > 0
+    }
   },
   watch: {
     searchParams(data) {
       this.syncSearchParams(data)
     }
+  },
+  created() {
+    this.syncSearchParams()
   },
   methods: {
     i18n(col) {
@@ -88,14 +96,6 @@ export default {
         if (data.value !== '') _.merge(q, parseQuery(data))
       }
       this.$emit('handleSearch', q)
-    }
-  },
-  computed: {
-    ...mapGetters({
-      resourceClass: 'resourceClass'
-    }),
-    haveSearchParams() {
-      return this.searchParams.length > 0
     }
   }
 }

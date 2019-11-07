@@ -1,25 +1,25 @@
 <template>
   <div class="login-container">
-    <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
-      <h3 class="title">{{$t('dashboard')}}</h3>
+    <el-form ref="loginForm" auto-complete="on" :model="loginForm" :rules="loginRules" class="login-form" label-position="left">
+      <h3 class="title">{{ $t('dashboard') }}</h3>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="username" />
+        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password"></svg-icon>
+          <svg-icon icon-class="password" />
         </span>
-        <el-input name="password" :type="pwdType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="password"></el-input>
+        <el-input v-model="loginForm.password" name="password" :type="pwdType" auto-complete="on" placeholder="password" @keyup.enter.native="handleLogin" />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
-          {{$t('login')}}
+          {{ $t('login') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  name: 'login',
+  name: 'Login',
   data() {
     const validatePass = (rule, value, callback) => {
       if (value.length < 5) {
@@ -101,6 +101,7 @@ $light_gray: #eee;
       height: 47px;
       &:-webkit-autofill {
         -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
+        box-shadow: 0 0 0px 1000px $bg inset !important;
         -webkit-text-fill-color: #fff !important;
       }
     }

@@ -1,5 +1,5 @@
 <template>
-  <base-crud resource='User'/>
+  <base-crud resource="User" />
 </template>
 
 <script>

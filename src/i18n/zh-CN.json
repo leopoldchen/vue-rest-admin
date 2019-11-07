@@ -61,6 +61,16 @@
         "updatedAt": "更新日期"
       },
       "management": "用户管理"
+    },
+    "Admin": {
+      "attr": {
+        "id": "序号",
+        "username": "用户名",
+        "password": "密码",
+        "createdAt": "创建日期",
+        "updatedAt": "更新日期"
+      },
+      "management": "Admin管理"
     }
   }
 }

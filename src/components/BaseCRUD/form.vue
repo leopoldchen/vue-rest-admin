@@ -1,6 +1,6 @@
 <template>
   <div class="form-container">
-    <el-form :rules="attrRules" ref="dataForm" :model="model" label-position="left" label-width="120px" style='width: 400px; margin-left:50px;'>
+    <el-form ref="dataForm" :rules="attrRules" :model="model" label-position="left" label-width="120px" style="width: 400px; margin-left:50px;">
       <el-form-item v-for="attr in attrs" :key="attr.name" :label="i18n(attr.alias || attr.name)" :prop="attr.name">
         <el-select v-if="attr.associate" v-model="model[attr.name]" filterable remote :remote-method="searchAssociate(attr)" :loading="loading" :multiple="attr.multiple">
           <el-option v-for="item in associateOptions[attr.name]" :key="item.key" :label="item.value" :value="item.key" />
@@ -8,17 +8,16 @@
         <el-input v-else-if="attrComponent(attr, 'input')" v-model="model[attr.name]" />
         <el-input v-else-if="attrComponent(attr, 'text')" v-model="model[attr.name]" type="textarea" />
         <el-select v-else-if="attrComponent(attr, 'select')" v-model="model[attr.name]">
-          <el-option v-for="item in attr.options" :key="item.key" :label="item.value" :value="item.key">
-          </el-option>
+          <el-option v-for="item in attr.options" :key="item.key" :label="item.value" :value="item.key" />
         </el-select>
         <el-date-picker v-else-if="attrComponent(attr, 'time')" v-model="model[attr.name]" type="datetime" />
-        <el-rate v-else-if="attrComponent(attr, 'rate')" style="margin-top:8px;" v-model="model[attr.name]" :colors="attr.colors" :max='attr.max'></el-rate>
+        <el-rate v-else-if="attrComponent(attr, 'rate')" v-model="model[attr.name]" style="margin-top:8px;" :colors="attr.colors" :max="attr.max" />
       </el-form-item>
     </el-form>
     <div slot="footer" class="form-footer">
-      <el-button @click="cancel">{{$t('cancel')}}</el-button>
-      <el-button v-if="status=='create'" type="primary" @click="createData">{{$t('save')}}</el-button>
-      <el-button v-else type="primary" @click="updateData">{{$t('update')}}</el-button>
+      <el-button @click="cancel">{{ $t('cancel') }}</el-button>
+      <el-button v-if="status=='create'" type="primary" @click="createData">{{ $t('save') }}</el-button>
+      <el-button v-else type="primary" @click="updateData">{{ $t('update') }}</el-button>
     </div>
   </div>
 </template>
@@ -46,8 +45,16 @@ export default {
       loading: false
     }
   },
-  created() {
-    this.initModel()
+  computed: {
+    ...mapGetters({
+      resourceClass: 'resourceClass'
+    }),
+    attrs() {
+      return this.resourceClass.editableAttrs()
+    },
+    attrRules() {
+      return this.resourceClass.attrRules()
+    }
   },
   watch: {
     formData(data) {
@@ -56,6 +63,9 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     }
+  },
+  created() {
+    this.initModel()
   },
   methods: {
     i18n(col) {
@@ -130,17 +140,6 @@ export default {
     async updateData() {
       const valid = await this.$refs['dataForm'].validate()
       valid && this.$emit('update', this.model)
-    }
-  },
-  computed: {
-    ...mapGetters({
-      resourceClass: 'resourceClass'
-    }),
-    attrs() {
-      return this.resourceClass.editableAttrs()
-    },
-    attrRules() {
-      return this.resourceClass.attrRules()
     }
   }
 }

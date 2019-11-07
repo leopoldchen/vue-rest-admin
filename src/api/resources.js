@@ -4,7 +4,7 @@ import createService from '@/utils/request'
 const request = createService()
 
 export function resourceCRUD(resource) {
-  const url = '/api/admin/' + resource
+  const url = '/admin/' + resource
   return {
     list(data) {
       return request({

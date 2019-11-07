@@ -9,14 +9,14 @@ import {
 
 export default function createService(baseUrl, timeout) {
   const service = axios.create({
-    baseURL: baseUrl || process.env.BASE_API,
+    baseURL: baseUrl || process.env.VUE_APP_BASE_API,
     timeout: timeout || 5000
   })
 
   service.interceptors.request.use(
     config => {
       if (store.getters.token) {
-        config.headers['Authorization'] = 'Bearer ' + getToken()
+        config.headers['token'] = getToken()
       }
       return config
     },

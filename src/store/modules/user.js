@@ -40,8 +40,8 @@ const user = {
       commit
     }, userInfo) {
       const username = userInfo.username.trim()
-      const res = await login(username, userInfo.password)
-      const data = res.data
+      const data = await login(username, userInfo.password)
+      // const data = res.data
       setToken(data.token)
       commit('SET_TOKEN', data.token)
     },
@@ -50,19 +50,19 @@ const user = {
     async GetInfo({
       commit
     }) {
-      const res = await getInfo()
-      const data = res.data
+      const data = await getInfo()
+      // const data = res.data
       const roles = []
-      if (data.role === 'admin') {
+      if (data.role) {
         roles.push(data.role)
         commit('SET_ROLES', roles)
       } else {
-        commit('SET_TOKEN', '')
-        return Promise.reject('getInfo: roles must be a non-null array !')
+        roles.push('admin')
+        commit('SET_ROLES', roles)
       }
       commit('SET_ID', data.id)
       commit('SET_NAME', data.username)
-      commit('SET_AVATAR', data.avatarUrl)
+      // commit('SET_AVATAR', data.avatarUrl)
       return roles
     },
 

@@ -55,8 +55,19 @@
       "attr": {
         "id": "id",
         "username": "username",
+        "password": "password",
         "role": "role",
         "desc": "desc",
+        "createdAt": "created at",
+        "updatedAt": "updated at"
+      },
+      "management": "user management"
+    },
+    "Admin": {
+      "attr": {
+        "id": "id",
+        "username": "username",
+        "password": "password",
         "createdAt": "created at",
         "updatedAt": "updated at"
       },
