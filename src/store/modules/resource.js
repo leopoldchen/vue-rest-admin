@@ -1,7 +1,4 @@
-import {
-  getResourceClass,
-  newResource
-} from '@/resources';
+import { getResourceClass, newResource } from '@/resources';
 
 const resource = {
   state: {
@@ -48,35 +45,25 @@ const resource = {
     }
   },
   actions: {
-    setResourceName: ({
-      commit
-    }, { resourceName }) => {
+    setResourceName: ({ commit }, { resourceName }) => {
       commit('SET_RESOURCE_NAME', { resourceName });
     },
 
-    setActiveResource: ({
-      commit
-    }, { resource }) => {
+    setActiveResource: ({ commit }, { resource }) => {
       commit('SET_ACTIVE_RESOURCE', { resource });
     },
 
-    async setQueryOptions({
-      commit, state
-    }, {
-      queryOptions
-    }) {
+    async setQueryOptions({ commit, state }, { queryOptions }) {
       await commit('SET_QUERY_OPTIONS', { queryOptions });
       const res = await state.api.list(queryOptions);
-      const resourceList = res.rows.map(row => newResource(state.resourceName, row));
+      const resourceList = res.rows.map(row =>
+        newResource(state.resourceName, row)
+      );
       const total = res.count;
       await commit('SET_RESOURCE_LIST', { resourceList, total });
     },
 
-    async setSelectedResouces({
-      commit
-    }, {
-      selectedResources
-    }) {
+    async setSelectedResouces({ commit }, { selectedResources }) {
       commit('SET_SELECTED_RESOURCES', { selectedResources });
     }
   }

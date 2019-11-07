@@ -1,17 +1,9 @@
 import _ from 'lodash';
 import moment from 'moment';
-import {
-  newResource,
-  getResourceClass
-} from '@/resources';
-import {
-  rolesCan
-} from '@/utils/cancan';
+import { newResource, getResourceClass } from '@/resources';
+import { rolesCan } from '@/utils/cancan';
 import { ActiveQuery } from '@/utils/query';
-import {
-  mapGetters,
-  mapActions
-} from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import CRUDTable from './table';
 import CRUDForm from './form';
 import CRUDShow from './show';
@@ -64,14 +56,20 @@ export default {
       return this.resourceClass.i18n(col);
     },
     can(action) {
-      if (this.actions.disabled && _.indexOf(this.actions.disabled, action) === -1) {
+      if (
+        this.actions.disabled &&
+        _.indexOf(this.actions.disabled, action) === -1
+      ) {
         return rolesCan(this.roles, action, this.resourceClass);
       }
     },
     async getList() {
       this.listLoading = true;
       const query = this.resourceClass.queryFilter(new ActiveQuery());
-      const queryOptions = query.where(this.listFilter).paginate(this.listQuery.page, this.listQuery.perPage).order(this.listQuery.order).query;
+      const queryOptions = query
+        .where(this.listFilter)
+        .paginate(this.listQuery.page, this.listQuery.perPage)
+        .order(this.listQuery.order).query;
       await this.setQueryOptions({ queryOptions });
       this.listLoading = false;
     },
@@ -81,7 +79,11 @@ export default {
       if (col.filter) return col.filter(value);
       if (col.associate) {
         const item = _.get(row, col.associateAs || _.snakeCase(col.associate));
-        return (item && (item[col.associateField] || item[this.getNestedAttr(col.name)])) || value;
+        return (
+          (item &&
+            (item[col.associateField] || item[this.getNestedAttr(col.name)])) ||
+          value
+        );
       }
       if (col.type === 'Date') {
         return moment(value).format(FORMAT.date);
@@ -102,22 +104,25 @@ export default {
         });
         if (index !== -1) {
           const extraAction = this.actions.extra[index];
-          const func = extraAction.func || this[`handle${_.capitalize(action)}`];
+          const func =
+            extraAction.func || this[`handle${_.capitalize(action)}`];
           if (!func) throw new Error('Missing action' + action);
           if (extraAction.confirmMsg) {
             this.$confirm(extraAction.confirmMsg(row), '', {
               confirmButtonText: this.$t('ok'),
               cancelButtonText: this.$t('cancel'),
               type: 'warning'
-            }).then(async() => {
-              await func(row);
-              this.getList();
-            }).catch(() => {
-              this.$message({
-                type: 'error',
-                message: this.$t('base.failed.message')
+            })
+              .then(async () => {
+                await func(row);
+                this.getList();
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'error',
+                  message: this.$t('base.failed.message')
+                });
               });
-            });
           } else {
             await func(row);
             this.getList();
@@ -139,9 +144,14 @@ export default {
     },
     async handleCreate() {
       const resource = {};
-      _.forEach(this.resourceClass.attributes(), (attr) => {
-        if ((attr.required || attr.edit !== false) && attr.default !== undefined) {
-          resource[attr.name] = _.isFunction(attr.default) ? attr.default() : attr.default;
+      _.forEach(this.resourceClass.attributes(), attr => {
+        if (
+          (attr.required || attr.edit !== false) &&
+          attr.default !== undefined
+        ) {
+          resource[attr.name] = _.isFunction(attr.default)
+            ? attr.default()
+            : attr.default;
         }
       });
       this.setActiveResource({ resource });
@@ -149,13 +159,17 @@ export default {
       this.dialogFormVisible = true;
     },
     async handleEdit(row) {
-      const resource = this.list[this.list.findIndex(item => item.id === row.id)];
+      const resource = this.list[
+        this.list.findIndex(item => item.id === row.id)
+      ];
       this.setActiveResource({ resource });
       this.dialogStatus = 'update';
       this.dialogFormVisible = true;
     },
     async handleShow(row) {
-      const resource = this.list[this.list.findIndex(item => item.id === row.id)];
+      const resource = this.list[
+        this.list.findIndex(item => item.id === row.id)
+      ];
       this.setActiveResource({ resource });
       this.showingFormVisible = true;
     },
@@ -171,7 +185,9 @@ export default {
       const exportAttrs = this.resourceClass.exportAttrs();
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = exportAttrs.map(item => this.i18n(item.name));
-        const data = this.selected.map(row => exportAttrs.map(col => this.colFilter(col, row)));
+        const data = this.selected.map(row =>
+          exportAttrs.map(col => this.colFilter(col, row))
+        );
         excel.export_json_to_excel({
           header: tHeader,
           data,
@@ -223,32 +239,34 @@ export default {
         confirmButtonText: this.$t('ok'),
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
-      }).then(() => {
-        this.api
-          .destroy(row)
-          .then(() => {
-            this.$notify({
-              title: this.$t('success'),
-              message: this.$t('base.success.delete'),
-              type: 'success',
-              duration: 2000
+      })
+        .then(() => {
+          this.api
+            .destroy(row)
+            .then(() => {
+              this.$notify({
+                title: this.$t('success'),
+                message: this.$t('base.success.delete'),
+                type: 'success',
+                duration: 2000
+              });
+              this.getList();
+            })
+            .catch(err => {
+              console.error(err);
+              this.$message({
+                type: 'error',
+                message: this.$t('base.failed.delete')
+              });
             });
-            this.getList();
-          })
-          .catch(err => {
-            console.error(err);
-            this.$message({
-              type: 'error',
-              message: this.$t('base.failed.delete')
-            });
+        })
+        .catch(err => {
+          console.error(err);
+          this.$message({
+            type: 'error',
+            message: this.$t('base.failed.delete')
           });
-      }).catch(err => {
-        console.error(err);
-        this.$message({
-          type: 'error',
-          message: this.$t('base.failed.delete')
         });
-      });
     },
     handleDeleteAll() {
       if (this.selected.length === 0) {
@@ -262,29 +280,31 @@ export default {
         confirmButtonText: this.$t('ok'),
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
-      }).then(() => {
-        this.api
-          .destroyAll({
-            ids: this.selected.map((row) => row.id)
-          })
-          .then(() => {
-            this.$notify({
-              title: this.$t('success'),
-              message: this.$t('base.success.delete'),
-              type: 'success',
-              duration: 2000
+      })
+        .then(() => {
+          this.api
+            .destroyAll({
+              ids: this.selected.map(row => row.id)
+            })
+            .then(() => {
+              this.$notify({
+                title: this.$t('success'),
+                message: this.$t('base.success.delete'),
+                type: 'success',
+                duration: 2000
+              });
+              this.getList();
+            })
+            .catch(err => {
+              console.log(err);
             });
-            this.getList();
-          })
-          .catch(err => {
-            console.log(err);
+        })
+        .catch(() => {
+          this.$message({
+            type: 'error',
+            message: this.$t('base.failed.delete')
           });
-      }).catch(() => {
-        this.$message({
-          type: 'error',
-          message: this.$t('base.failed.delete')
         });
-      });
     },
     handleSort(column, order) {
       this.listQuery.order = column ? column + '-' + order : undefined;
@@ -330,7 +350,9 @@ export default {
       return data;
     },
     searchableFilters() {
-      return this.resourceClass.searchAttrs().map(attr => attr.alias || attr.name);
+      return this.resourceClass
+        .searchAttrs()
+        .map(attr => attr.alias || attr.name);
     }
   },
   components: {

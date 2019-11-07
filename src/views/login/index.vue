@@ -1,24 +1,49 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" auto-complete="on" :model="loginForm" :rules="loginRules" class="login-form" label-position="left">
+    <el-form
+      ref="loginForm"
+      auto-complete="on"
+      :model="loginForm"
+      :rules="loginRules"
+      class="login-form"
+      label-position="left"
+    >
       <h3 class="title">{{ $t('dashboard') }}</h3>
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
         </span>
-        <el-input v-model="loginForm.username" name="username" type="text" auto-complete="on" placeholder="username" />
+        <el-input
+          v-model="loginForm.username"
+          name="username"
+          type="text"
+          auto-complete="on"
+          placeholder="username"
+        />
       </el-form-item>
       <el-form-item prop="password">
         <span class="svg-container">
           <svg-icon icon-class="password" />
         </span>
-        <el-input v-model="loginForm.password" name="password" :type="pwdType" auto-complete="on" placeholder="password" @keyup.enter.native="handleLogin" />
+        <el-input
+          v-model="loginForm.password"
+          name="password"
+          :type="pwdType"
+          auto-complete="on"
+          placeholder="password"
+          @keyup.enter.native="handleLogin"
+        />
         <span class="show-pwd" @click="showPwd">
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" style="width:100%;" :loading="loading" @click.native.prevent="handleLogin">
+        <el-button
+          type="primary"
+          style="width:100%;"
+          :loading="loading"
+          @click.native.prevent="handleLogin"
+        >
           {{ $t('login') }}
         </el-button>
       </el-form-item>
@@ -32,11 +57,11 @@ export default {
   data() {
     const validatePass = (rule, value, callback) => {
       if (value.length < 5) {
-        callback(new Error('密码不能小于5位'))
+        callback(new Error('密码不能小于5位'));
       } else {
-        callback()
+        callback();
       }
-    }
+    };
     return {
       loginForm: {
         username: '',
@@ -48,37 +73,37 @@ export default {
       },
       loading: false,
       pwdType: 'password'
-    }
+    };
   },
   methods: {
     showPwd() {
       if (this.pwdType === 'password') {
-        this.pwdType = ''
+        this.pwdType = '';
       } else {
-        this.pwdType = 'password'
+        this.pwdType = 'password';
       }
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
+          this.loading = true;
           this.$store
             .dispatch('Login', this.loginForm)
             .then(() => {
-              this.loading = false
-              this.$router.push({ path: '/' })
+              this.loading = false;
+              this.$router.push({ path: '/' });
             })
             .catch(() => {
-              this.loading = false
-            })
+              this.loading = false;
+            });
         } else {
-          console.log('error submit!!')
-          return false
+          console.log('error submit!!');
+          return false;
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style rel="stylesheet/scss" lang="scss">

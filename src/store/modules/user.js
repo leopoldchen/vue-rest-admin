@@ -1,12 +1,5 @@
-import {
-  login,
-  getInfo
-} from '@/api/login';
-import {
-  getToken,
-  setToken,
-  removeToken
-} from '@/utils/auth';
+import { login, getInfo } from '@/api/login';
+import { getToken, setToken, removeToken } from '@/utils/auth';
 
 const user = {
   state: {
@@ -36,9 +29,7 @@ const user = {
 
   actions: {
     // 登录
-    async Login({
-      commit
-    }, userInfo) {
+    async Login({ commit }, userInfo) {
       const username = userInfo.username.trim();
       const data = await login(username, userInfo.password);
       // const data = res.data
@@ -47,9 +38,7 @@ const user = {
     },
 
     // 获取用户信息
-    async GetInfo({
-      commit
-    }) {
+    async GetInfo({ commit }) {
       const data = await getInfo();
       // const data = res.data
       const roles = [];
@@ -67,18 +56,14 @@ const user = {
     },
 
     // 登出
-    LogOut({
-      commit
-    }) {
+    LogOut({ commit }) {
       commit('SET_TOKEN', '');
       commit('SET_ROLES', []);
       removeToken();
     },
 
     // 前端 登出
-    FedLogOut({
-      commit
-    }) {
+    FedLogOut({ commit }) {
       commit('SET_TOKEN', '');
       removeToken();
     }

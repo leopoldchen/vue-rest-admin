@@ -14,8 +14,7 @@
 </template>
 
 <script>
-
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
 export default {
   name: 'CRUDShow',
   props: {
@@ -28,8 +27,8 @@ export default {
   },
   methods: {
     i18n(col) {
-      return this.resourceClass.i18n(col)
+      return this.resourceClass.i18n(col);
     }
   }
-}
+};
 </script>
