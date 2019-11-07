@@ -19,5 +19,5 @@ const getters = {
   attributes: state => state.resource.attributes,
   api: state => state.resource.api,
   nested: state => state.resource.nested
-}
-export default getters
+};
+export default getters;

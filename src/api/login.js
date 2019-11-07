@@ -1,6 +1,6 @@
-import createService from '@/utils/request'
+import createService from '@/utils/request';
 
-const request = createService()
+const request = createService();
 
 export function login(username, password) {
   return request({
@@ -10,12 +10,12 @@ export function login(username, password) {
       username,
       password
     }
-  })
+  });
 }
 
 export function getInfo() {
   return request({
     url: '/admin/current',
     method: 'get'
-  })
+  });
 }

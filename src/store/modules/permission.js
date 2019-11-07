@@ -1,10 +1,10 @@
 import {
   asyncRouters,
   constantRouters
-} from '@/router'
+} from '@/router';
 import {
   rolesCan
-} from '@/utils/cancan'
+} from '@/utils/cancan';
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -12,8 +12,8 @@ import {
  * @param route
  */
 function hasPermission(roles, route) {
-  if (route.resource) return rolesCan(roles, 'view', route.resource)
-  return true
+  if (route.resource) return rolesCan(roles, 'view', route.resource);
+  return true;
 }
 
 /**
@@ -25,13 +25,13 @@ function filterAsyncRouter(asyncRouters, roles) {
   const accessedRouters = asyncRouters.filter(route => {
     if (hasPermission(roles, route)) {
       if (route.children && route.children.length) {
-        route.children = filterAsyncRouter(route.children, roles)
+        route.children = filterAsyncRouter(route.children, roles);
       }
-      return true
+      return true;
     }
-    return false
-  })
-  return accessedRouters
+    return false;
+  });
+  return accessedRouters;
 }
 
 const permission = {
@@ -41,8 +41,8 @@ const permission = {
   },
   mutations: {
     SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers
-      state.routers = constantRouters.concat(routers)
+      state.addRouters = routers;
+      state.routers = constantRouters.concat(routers);
     }
   },
   actions: {
@@ -51,17 +51,17 @@ const permission = {
     }, data) {
       const {
         roles
-      } = data
-      let accessedRouters
+      } = data;
+      let accessedRouters;
       if (roles.includes('admin')) {
-        accessedRouters = asyncRouters
+        accessedRouters = asyncRouters;
       } else {
-        accessedRouters = filterAsyncRouter(asyncRouters, roles)
+        accessedRouters = filterAsyncRouter(asyncRouters, roles);
       }
-      commit('SET_ROUTERS', accessedRouters)
-      return accessedRouters
+      commit('SET_ROUTERS', accessedRouters);
+      return accessedRouters;
     }
   }
-}
+};
 
-export default permission
+export default permission;

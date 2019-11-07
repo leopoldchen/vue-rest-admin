@@ -1,27 +1,27 @@
-import _ from 'lodash'
-import moment from 'moment'
+import _ from 'lodash';
+import moment from 'moment';
 import {
   newResource,
   getResourceClass
-} from '@/resources'
+} from '@/resources';
 import {
   rolesCan
-} from '@/utils/cancan'
-import { ActiveQuery } from '@/utils/query'
+} from '@/utils/cancan';
+import { ActiveQuery } from '@/utils/query';
 import {
   mapGetters,
   mapActions
-} from 'vuex'
-import CRUDTable from './table'
-import CRUDForm from './form'
-import CRUDShow from './show'
-import CRUDPaginate from './paginate'
-import CRUDFilter from './filter'
+} from 'vuex';
+import CRUDTable from './table';
+import CRUDForm from './form';
+import CRUDShow from './show';
+import CRUDPaginate from './paginate';
+import CRUDFilter from './filter';
 
-const DEFAULT_ACTIONS = ['create', 'show', 'edit', 'delete', 'export']
+const DEFAULT_ACTIONS = ['create', 'show', 'edit', 'delete', 'export'];
 const FORMAT = {
   date: 'YYYY-MM-DD HH:mm'
-}
+};
 
 export default {
   props: {
@@ -48,11 +48,11 @@ export default {
       },
       downloadLoading: false,
       searchParams: []
-    }
+    };
   },
   async created() {
-    await this.setResourceName({ resourceName: this.resource })
-    await this.getList()
+    await this.setResourceName({ resourceName: this.resource });
+    await this.getList();
   },
   methods: {
     ...mapActions({
@@ -61,161 +61,161 @@ export default {
       setQueryOptions: 'setQueryOptions'
     }),
     i18n(col) {
-      return this.resourceClass.i18n(col)
+      return this.resourceClass.i18n(col);
     },
     can(action) {
       if (this.actions.disabled && _.indexOf(this.actions.disabled, action) === -1) {
-        return rolesCan(this.roles, action, this.resourceClass)
+        return rolesCan(this.roles, action, this.resourceClass);
       }
     },
     async getList() {
-      this.listLoading = true
-      const query = this.resourceClass.queryFilter(new ActiveQuery())
-      const queryOptions = query.where(this.listFilter).paginate(this.listQuery.page, this.listQuery.perPage).order(this.listQuery.order).query
-      await this.setQueryOptions({ queryOptions })
-      this.listLoading = false
+      this.listLoading = true;
+      const query = this.resourceClass.queryFilter(new ActiveQuery());
+      const queryOptions = query.where(this.listFilter).paginate(this.listQuery.page, this.listQuery.perPage).order(this.listQuery.order).query;
+      await this.setQueryOptions({ queryOptions });
+      this.listLoading = false;
     },
     colFilter(col, row) {
-      const value = _.get(row, col.name)
-      if (value === null || value === undefined) return ''
-      if (col.filter) return col.filter(value)
+      const value = _.get(row, col.name);
+      if (value === null || value === undefined) return '';
+      if (col.filter) return col.filter(value);
       if (col.associate) {
-        const item = _.get(row, col.associateAs || _.snakeCase(col.associate))
-        return (item && (item[col.associateField] || item[this.getNestedAttr(col.name)])) || value
+        const item = _.get(row, col.associateAs || _.snakeCase(col.associate));
+        return (item && (item[col.associateField] || item[this.getNestedAttr(col.name)])) || value;
       }
       if (col.type === 'Date') {
-        return moment(value).format(FORMAT.date)
+        return moment(value).format(FORMAT.date);
       }
-      return value
+      return value;
     },
     getNestedAttr(name) {
       for (const item of this.nested) {
-        if (item.name === name) return getResourceClass(item.associate).title()
+        if (item.name === name) return getResourceClass(item.associate).title();
       }
     },
     async handleAction(action, row) {
       if (_.indexOf(DEFAULT_ACTIONS, action) !== -1) {
-        return this[`handle${_.capitalize(action)}`](row)
+        return this[`handle${_.capitalize(action)}`](row);
       } else {
         const index = _.findIndex(this.actions.extra, {
           name: action
-        })
+        });
         if (index !== -1) {
-          const extraAction = this.actions.extra[index]
-          const func = extraAction.func || this[`handle${_.capitalize(action)}`]
-          if (!func) throw new Error('Missing action' + action)
+          const extraAction = this.actions.extra[index];
+          const func = extraAction.func || this[`handle${_.capitalize(action)}`];
+          if (!func) throw new Error('Missing action' + action);
           if (extraAction.confirmMsg) {
             this.$confirm(extraAction.confirmMsg(row), '', {
               confirmButtonText: this.$t('ok'),
               cancelButtonText: this.$t('cancel'),
               type: 'warning'
             }).then(async() => {
-              await func(row)
-              this.getList()
+              await func(row);
+              this.getList();
             }).catch(() => {
               this.$message({
                 type: 'error',
                 message: this.$t('base.failed.message')
-              })
-            })
+              });
+            });
           } else {
-            await func(row)
-            this.getList()
+            await func(row);
+            this.getList();
           }
         }
       }
     },
     handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
+      this.listQuery.page = 1;
+      this.getList();
     },
     handleSizeChange(val) {
-      this.listQuery.perPage = val
-      this.getList()
+      this.listQuery.perPage = val;
+      this.getList();
     },
     handleCurrentChange(val) {
-      this.listQuery.page = val
-      this.getList()
+      this.listQuery.page = val;
+      this.getList();
     },
     async handleCreate() {
-      const resource = {}
+      const resource = {};
       _.forEach(this.resourceClass.attributes(), (attr) => {
         if ((attr.required || attr.edit !== false) && attr.default !== undefined) {
-          resource[attr.name] = _.isFunction(attr.default) ? attr.default() : attr.default
+          resource[attr.name] = _.isFunction(attr.default) ? attr.default() : attr.default;
         }
-      })
-      this.setActiveResource({ resource })
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
+      });
+      this.setActiveResource({ resource });
+      this.dialogStatus = 'create';
+      this.dialogFormVisible = true;
     },
     async handleEdit(row) {
-      const resource = this.list[this.list.findIndex(item => item.id === row.id)]
-      this.setActiveResource({ resource })
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
+      const resource = this.list[this.list.findIndex(item => item.id === row.id)];
+      this.setActiveResource({ resource });
+      this.dialogStatus = 'update';
+      this.dialogFormVisible = true;
     },
     async handleShow(row) {
-      const resource = this.list[this.list.findIndex(item => item.id === row.id)]
-      this.setActiveResource({ resource })
-      this.showingFormVisible = true
+      const resource = this.list[this.list.findIndex(item => item.id === row.id)];
+      this.setActiveResource({ resource });
+      this.showingFormVisible = true;
     },
     handleExport() {
       if (this.selected.length === 0) {
         this.$message({
           type: 'error',
           message: this.$t('base.failed.empty')
-        })
-        return
+        });
+        return;
       }
-      this.downloadLoading = true
-      const exportAttrs = this.resourceClass.exportAttrs()
+      this.downloadLoading = true;
+      const exportAttrs = this.resourceClass.exportAttrs();
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = exportAttrs.map(item => this.i18n(item.name))
-        const data = this.selected.map(row => exportAttrs.map(col => this.colFilter(col, row)))
+        const tHeader = exportAttrs.map(item => this.i18n(item.name));
+        const data = this.selected.map(row => exportAttrs.map(col => this.colFilter(col, row)));
         excel.export_json_to_excel({
           header: tHeader,
           data,
           filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
+        });
+        this.downloadLoading = false;
+      });
     },
     async createData(data) {
       try {
-        await this.api.create(data)
-        this.dialogFormVisible = false
-        this.handleCurrentChange(1)
+        await this.api.create(data);
+        this.dialogFormVisible = false;
+        this.handleCurrentChange(1);
         this.$notify({
           title: this.$t('success'),
           message: this.$t('base.success.create'),
           type: 'success',
           duration: 2000
-        })
+        });
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     },
     async updateData(data) {
-      let temp = newResource(this.resource, data)
+      let temp = newResource(this.resource, data);
       try {
-        temp = await this.api.update(temp)
+        temp = await this.api.update(temp);
         for (const v of this.list) {
           if (v.id === temp.id) {
-            const index = this.list.indexOf(v)
-            this.list.splice(index, 1, temp)
-            break
+            const index = this.list.indexOf(v);
+            this.list.splice(index, 1, temp);
+            break;
           }
         }
-        this.dialogFormVisible = false
+        this.dialogFormVisible = false;
         this.$notify({
           title: this.$t('success'),
           message: this.$t('base.success.update'),
           type: 'success',
           duration: 2000
-        })
-        this.getList()
+        });
+        this.getList();
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     },
     async handleDelete(row) {
@@ -232,31 +232,31 @@ export default {
               message: this.$t('base.success.delete'),
               type: 'success',
               duration: 2000
-            })
-            this.getList()
+            });
+            this.getList();
           })
           .catch(err => {
-            console.error(err)
+            console.error(err);
             this.$message({
               type: 'error',
               message: this.$t('base.failed.delete')
-            })
-          })
+            });
+          });
       }).catch(err => {
-        console.error(err)
+        console.error(err);
         this.$message({
           type: 'error',
           message: this.$t('base.failed.delete')
-        })
-      })
+        });
+      });
     },
     handleDeleteAll() {
       if (this.selected.length === 0) {
         this.$message({
           type: 'error',
           message: this.$t('base.failed.empty')
-        })
-        return
+        });
+        return;
       }
       this.$confirm(this.$t('base.confirm.deleteList'), this.$t('delete'), {
         confirmButtonText: this.$t('ok'),
@@ -273,35 +273,35 @@ export default {
               message: this.$t('base.success.delete'),
               type: 'success',
               duration: 2000
-            })
-            this.getList()
+            });
+            this.getList();
           })
           .catch(err => {
-            console.log(err)
-          })
+            console.log(err);
+          });
       }).catch(() => {
         this.$message({
           type: 'error',
           message: this.$t('base.failed.delete')
-        })
-      })
+        });
+      });
     },
     handleSort(column, order) {
-      this.listQuery.order = column ? column + '-' + order : undefined
-      this.getList()
+      this.listQuery.order = column ? column + '-' + order : undefined;
+      this.getList();
     },
     handleAddFilter(filter) {
       if (_.indexOf(this.searchParams, filter) === -1) {
-        this.searchParams.push(filter)
+        this.searchParams.push(filter);
       }
     },
     handleRemoveFilter(filter) {
-      const index = _.indexOf(this.searchParams, filter)
-      if (index !== -1) this.searchParams.splice(index, 1)
+      const index = _.indexOf(this.searchParams, filter);
+      if (index !== -1) this.searchParams.splice(index, 1);
     },
     handleSearch(q) {
-      this.listFilter = q
-      this.getList()
+      this.listFilter = q;
+      this.getList();
     }
   },
   computed: {
@@ -319,18 +319,18 @@ export default {
       actions: 'actions'
     }),
     showingData() {
-      if (!this.showingFormVisible) return []
-      const data = []
+      if (!this.showingFormVisible) return [];
+      const data = [];
       _.forEach(this.attributes, item => {
         data.push({
           key: item.name,
           value: this.activeRow[item.name]
-        })
-      })
-      return data
+        });
+      });
+      return data;
     },
     searchableFilters() {
-      return this.resourceClass.searchAttrs().map(attr => attr.alias || attr.name)
+      return this.resourceClass.searchAttrs().map(attr => attr.alias || attr.name);
     }
   },
   components: {
@@ -340,4 +340,4 @@ export default {
     'crud-paginate': CRUDPaginate,
     'crud-filter': CRUDFilter
   }
-}
+};

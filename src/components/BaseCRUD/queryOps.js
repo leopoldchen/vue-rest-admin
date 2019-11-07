@@ -1,7 +1,7 @@
-import { ActiveQuery } from '@/utils/query'
+import { ActiveQuery } from '@/utils/query';
 import {
   i18n
-} from '@/i18n'
+} from '@/i18n';
 
 const commonOps = () => {
   return [{
@@ -12,8 +12,8 @@ const commonOps = () => {
     key: 'ne',
     value: i18n.t('base.queryOp.ne')
   }
-  ]
-}
+  ];
+};
 
 export const queryOps = () => {
   return {
@@ -76,33 +76,33 @@ export const queryOps = () => {
       value: i18n.t('base.queryOp.notIn')
     }
     ])
-  }
-}
+  };
+};
 
 export const getQueryOps = (type) => {
-  return queryOps()[type] || commonOps()
-}
+  return queryOps()[type] || commonOps();
+};
 
 export const parseQuery = ({
   q,
   op,
   value
 }) => {
-  const key = ActiveQuery.queryKey(q, op)
+  const key = ActiveQuery.queryKey(q, op);
   switch (op) {
     case 'like':
     case 'notLike':
       return {
         [key]: '%' + value + '%'
-      }
+      };
     case 'in':
     case 'notIn':
       return {
         [key]: value.split(',')
-      }
+      };
     default:
       return {
         [key]: value
-      }
+      };
   }
-}
+};

@@ -1,7 +1,7 @@
 import {
   getResourceClass,
   newResource
-} from '@/resources'
+} from '@/resources';
 
 const resource = {
   state: {
@@ -20,44 +20,44 @@ const resource = {
   },
   mutations: {
     SET_RESOURCE_NAME: (state, { resourceName }) => {
-      if (state.resourceName === resourceName) return
-      state.resourceName = resourceName
-      state.resourceClass = getResourceClass(state.resourceName)
-      state.actions = state.resourceClass.actions()
-      state.attributes = state.resourceClass.attributes()
-      state.api = state.resourceClass.api()
-      state.resourceList = []
-      state.selectedResources = []
-      state.total = 0
-      state.activeResource = undefined
-      state.queryOptions = {}
-      state.nested = state.resourceClass.nested()
+      if (state.resourceName === resourceName) return;
+      state.resourceName = resourceName;
+      state.resourceClass = getResourceClass(state.resourceName);
+      state.actions = state.resourceClass.actions();
+      state.attributes = state.resourceClass.attributes();
+      state.api = state.resourceClass.api();
+      state.resourceList = [];
+      state.selectedResources = [];
+      state.total = 0;
+      state.activeResource = undefined;
+      state.queryOptions = {};
+      state.nested = state.resourceClass.nested();
     },
     SET_ACTIVE_RESOURCE: (state, { resource }) => {
-      state.activeResource = resource
+      state.activeResource = resource;
     },
     SET_QUERY_OPTIONS: (state, { queryOptions }) => {
-      state.queryOptions = queryOptions
+      state.queryOptions = queryOptions;
     },
     SET_RESOURCE_LIST: (state, { resourceList, total }) => {
-      state.resourceList = resourceList
-      state.total = total
+      state.resourceList = resourceList;
+      state.total = total;
     },
     SET_SELECTED_RESOURCES: (state, { selectedResources }) => {
-      state.selectedResources = selectedResources
+      state.selectedResources = selectedResources;
     }
   },
   actions: {
     setResourceName: ({
       commit
     }, { resourceName }) => {
-      commit('SET_RESOURCE_NAME', { resourceName })
+      commit('SET_RESOURCE_NAME', { resourceName });
     },
 
     setActiveResource: ({
       commit
     }, { resource }) => {
-      commit('SET_ACTIVE_RESOURCE', { resource })
+      commit('SET_ACTIVE_RESOURCE', { resource });
     },
 
     async setQueryOptions({
@@ -65,11 +65,11 @@ const resource = {
     }, {
       queryOptions
     }) {
-      await commit('SET_QUERY_OPTIONS', { queryOptions })
-      const res = await state.api.list(queryOptions)
-      const resourceList = res.rows.map(row => newResource(state.resourceName, row))
-      const total = res.count
-      await commit('SET_RESOURCE_LIST', { resourceList, total })
+      await commit('SET_QUERY_OPTIONS', { queryOptions });
+      const res = await state.api.list(queryOptions);
+      const resourceList = res.rows.map(row => newResource(state.resourceName, row));
+      const total = res.count;
+      await commit('SET_RESOURCE_LIST', { resourceList, total });
     },
 
     async setSelectedResouces({
@@ -77,9 +77,9 @@ const resource = {
     }, {
       selectedResources
     }) {
-      commit('SET_SELECTED_RESOURCES', { selectedResources })
+      commit('SET_SELECTED_RESOURCES', { selectedResources });
     }
   }
-}
+};
 
-export default resource
+export default resource;
