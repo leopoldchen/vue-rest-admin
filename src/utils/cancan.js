@@ -22,9 +22,7 @@ allow(Role, 'manage', 'all', role => {
 
 export const roleCan = (role, action, resource) => {
   const roleInstance = _.isString(role)
-    ? newResource('role', {
-        name: role
-      })
+    ? newResource('role', { name: role })
     : newResource('role', role);
   const resourceClass = _.isString(resource)
     ? getResourceClass(resource)
