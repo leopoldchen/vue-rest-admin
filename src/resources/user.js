@@ -1,5 +1,6 @@
 import { resourceCRUD } from '@/api/resources';
 import BaseResource from './base';
+import store from '@/store';
 
 const crudAPI = resourceCRUD('users');
 
@@ -56,5 +57,27 @@ export default class User extends BaseResource {
 
   static api() {
     return crudAPI;
+  }
+
+  static actions() {
+    return {
+      disabled: ['show'],
+      extra: [
+        {
+          name: 'reset',
+          button: 'mini',
+          width: '100px',
+          title() {
+            return 'Reset Password';
+          },
+          async func(row) {
+            await store.dispatch('setCustomData', {
+              row,
+              showResetPasswordDialog: true
+            });
+          }
+        }
+      ]
+    };
   }
 }

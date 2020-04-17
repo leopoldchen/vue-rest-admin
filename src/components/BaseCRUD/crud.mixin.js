@@ -96,6 +96,7 @@ export default {
       }
     },
     async handleAction(action, row) {
+      const that = this;
       if (_.indexOf(DEFAULT_ACTIONS, action) !== -1) {
         return this[`handle${_.capitalize(action)}`](row);
       } else {
@@ -114,17 +115,14 @@ export default {
               type: 'warning'
             })
               .then(async () => {
-                await func(row);
+                await func(row, that);
                 this.getList();
               })
-              .catch(() => {
-                this.$message({
-                  type: 'error',
-                  message: this.$t('base.failed.message')
-                });
+              .catch(err => {
+                console.error(err);
               });
           } else {
-            await func(row);
+            await func(row, that);
             this.getList();
           }
         }
@@ -254,18 +252,10 @@ export default {
             })
             .catch(err => {
               console.error(err);
-              this.$message({
-                type: 'error',
-                message: this.$t('base.failed.delete')
-              });
             });
         })
         .catch(err => {
           console.error(err);
-          this.$message({
-            type: 'error',
-            message: this.$t('base.failed.delete')
-          });
         });
     },
     handleDeleteAll() {
@@ -299,11 +289,8 @@ export default {
               console.log(err);
             });
         })
-        .catch(() => {
-          this.$message({
-            type: 'error',
-            message: this.$t('base.failed.delete')
-          });
+        .catch(err => {
+          console.error(err);
         });
     },
     handleSort(column, order) {

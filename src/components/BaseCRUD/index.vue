@@ -20,7 +20,7 @@
         >{{ $t('export') }}</el-button
       >
       <el-button
-        v-if="can('delete')"
+        v-if="can('destroy')"
         class="filter-item"
         style="margin-left: 10px;"
         type="primary"

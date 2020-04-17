@@ -1,4 +1,5 @@
 import { getResourceClass, newResource } from '@/resources';
+import * as _ from 'lodash';
 
 const resource = {
   state: {
@@ -13,7 +14,8 @@ const resource = {
     total: 0,
     actions: {},
     attributes: {},
-    api: {}
+    api: {},
+    customData: {}
   },
   mutations: {
     SET_RESOURCE_NAME: (state, { resourceName }) => {
@@ -29,6 +31,7 @@ const resource = {
       state.activeResource = undefined;
       state.queryOptions = {};
       state.nested = state.resourceClass.nested();
+      state.customData = {};
     },
     SET_ACTIVE_RESOURCE: (state, { resource }) => {
       state.activeResource = resource;
@@ -42,6 +45,12 @@ const resource = {
     },
     SET_SELECTED_RESOURCES: (state, { selectedResources }) => {
       state.selectedResources = selectedResources;
+    },
+    SET_CUSTOM_DATA: (state, { customData }) => {
+      state.customData = customData;
+    },
+    MERGE_CUSTOM_DATA: (state, { customData }) => {
+      _.merge(state.customData, customData);
     }
   },
   actions: {
@@ -53,9 +62,13 @@ const resource = {
       commit('SET_ACTIVE_RESOURCE', { resource });
     },
 
-    async setQueryOptions({ commit, state }, { queryOptions }) {
+    async setQueryOptions({ commit, state, dispatch }, { queryOptions }) {
       await commit('SET_QUERY_OPTIONS', { queryOptions });
-      const res = await state.api.list(queryOptions);
+      await dispatch('refreshResourceList');
+    },
+
+    async refreshResourceList({ commit, state }) {
+      const res = await state.api.list(state.queryOptions);
       const resourceList = res.rows.map(row =>
         newResource(state.resourceName, row)
       );
@@ -65,6 +78,14 @@ const resource = {
 
     async setSelectedResouces({ commit }, { selectedResources }) {
       commit('SET_SELECTED_RESOURCES', { selectedResources });
+    },
+
+    setCustomData: ({ commit }, customData) => {
+      commit('SET_CUSTOM_DATA', { customData });
+    },
+
+    mergeCustomData: ({ commit }, customData) => {
+      commit('MERGE_CUSTOM_DATA', { customData });
     }
   }
 };

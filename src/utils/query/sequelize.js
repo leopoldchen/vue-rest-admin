@@ -5,7 +5,7 @@ export default class SequelizeQuery {
     this.query = {
       where: {},
       include: [],
-      order: []
+      order: [['id', 'asc']]
     };
   }
 
@@ -46,7 +46,7 @@ export default class SequelizeQuery {
     for (let i = 0; i < rule.length - 2; i++) {
       rule[i] = _.capitalize(rule[i]);
     }
-    this.query.order.push(rule);
+    this.query.order = [rule];
     return this;
   }
 
